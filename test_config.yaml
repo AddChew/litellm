@@ -1,0 +1,38 @@
+model_list:
+  - model_name: bad-model
+    litellm_params:
+      model: openai/bad-model
+      api_key: os.environ/OPENAI_API_KEY
+      api_base: https://exampleopenaiendpoint-production.up.railway.app/
+      mock_timeout: True
+      timeout: 60
+      rpm: 1000
+
+litellm_settings:
+  ssl_verify: false
+  set_verbose: True  # Uncomment this if you want to see verbose logs; not recommended in production
+  request_timeout: 600
+  telemetry: False
+
+# router_settings:
+#   routing_strategy: usage-based-routing-v2 
+#   redis_host: os.environ/REDIS_HOST
+#   redis_password: os.environ/REDIS_PASSWORD
+#   redis_port: os.environ/REDIS_PORT
+#   enable_pre_call_checks: true
+#   model_group_alias: {"my-special-fake-model-alias-name": "fake-openai-endpoint-3"} 
+
+general_settings: 
+  pass_through_endpoints:
+    - path: v1/ocr/file                                  # route you want to add to LiteLLM Proxy Server
+      target: https://fake-json-api.mock.beeceptor.com/users          # URL this route should forward requests to
+      # headers:                                            # headers to forward to this URL
+      #   content-type: application/json                    # (Optional) Extra Headers to pass to this endpoint 
+      #   accept: application/json
+      forward_headers: True
+
+# environment_variables:
+  # settings for using redis caching
+  # REDIS_HOST: redis-16337.c322.us-east-1-2.ec2.cloud.redislabs.com
+  # REDIS_PORT: "16337"
+  # REDIS_PASSWORD: 
