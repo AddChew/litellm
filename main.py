@@ -1,5 +1,6 @@
 import os
 import yaml
+import asyncio
 import functools
 
 os.environ["CONFIG_FILE_PATH"] = "test_config.yaml"
@@ -13,8 +14,6 @@ def force_sync(fn):
     """
     turn an async function to sync function
     """
-    import asyncio
-    
     @functools.wraps(fn)
     def wrapper(*args, **kwargs):
         res = fn(*args, **kwargs)
