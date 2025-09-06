@@ -24,7 +24,7 @@ litellm_settings:
 
 general_settings: 
   pass_through_endpoints:
-    - path: v1/ocr/file                                  # route you want to add to LiteLLM Proxy Server
+    - path: /v1/ocr/file                                  # route you want to add to LiteLLM Proxy Server
       target: https://fake-json-api.mock.beeceptor.com/users          # URL this route should forward requests to
       # headers:                                            # headers to forward to this URL
       #   content-type: application/json                    # (Optional) Extra Headers to pass to this endpoint 
