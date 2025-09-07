@@ -3,6 +3,8 @@ import yaml
 import asyncio
 import functools
 
+os.environ["REDIS_HOST"] = "localhost"
+os.environ["REDIS_PORT"] = "6379"
 os.environ["CONFIG_FILE_PATH"] = "test_config.yaml"
 
 from ray import serve

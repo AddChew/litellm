@@ -14,11 +14,10 @@ litellm_settings:
   request_timeout: 600
   telemetry: False
 
-# router_settings:
-#   routing_strategy: usage-based-routing-v2 
-#   redis_host: os.environ/REDIS_HOST
-#   redis_password: os.environ/REDIS_PASSWORD
-#   redis_port: os.environ/REDIS_PORT
+router_settings:
+  routing_strategy: simple-shuffle
+  redis_host: os.environ/REDIS_HOST
+  redis_port: os.environ/REDIS_PORT
 #   enable_pre_call_checks: true
 #   model_group_alias: {"my-special-fake-model-alias-name": "fake-openai-endpoint-3"} 
 
