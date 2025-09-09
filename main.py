@@ -3,8 +3,6 @@ import yaml
 import asyncio
 import functools
 
-os.environ["REDIS_HOST"] = "localhost"
-os.environ["REDIS_PORT"] = "6379"
 os.environ["CONFIG_FILE_PATH"] = "test_config.yaml"
 
 from ray import serve
@@ -35,6 +33,9 @@ force_sync(initialize_pass_through_endpoints)(pass_through_endpoints)
 @serve.deployment
 @serve.ingress(app)
 class TestDeployment:
-    pass
+
+    def __init__(self):
+        os.environ["REDIS_HOST"] = "localhost"
+        os.environ["REDIS_PORT"] = "6379"
 
 deployment = TestDeployment.bind()
