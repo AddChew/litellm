@@ -234,7 +234,7 @@ class _PROXY_MaxParallelRequestsHandler_v3(CustomLogger):
             if current_limit is None or rate_limit_type is None:
                 continue
 
-            if counter_value is not None and int(counter_value) + 1 > current_limit:
+            if counter_value is not None and int(counter_value) > current_limit:
                 overall_code = "OVER_LIMIT"
                 item_code = "OVER_LIMIT"
 
@@ -433,21 +433,21 @@ class _PROXY_MaxParallelRequestsHandler_v3(CustomLogger):
             )
 
         # Team rate limits
-        if user_api_key_dict.team_id and (
-            user_api_key_dict.team_rpm_limit is not None
-            or user_api_key_dict.team_tpm_limit is not None
-        ):
-            descriptors.append(
-                RateLimitDescriptor(
-                    key="team",
-                    value=user_api_key_dict.team_id,
-                    rate_limit={
-                        "requests_per_unit": user_api_key_dict.team_rpm_limit,
-                        "tokens_per_unit": user_api_key_dict.team_tpm_limit,
-                        "window_size": self.window_size,
-                    },
-                )
+        # if user_api_key_dict.team_id and (
+        #     user_api_key_dict.team_rpm_limit is not None
+        #     or user_api_key_dict.team_tpm_limit is not None
+        # ):
+        descriptors.append(
+            RateLimitDescriptor(
+                key="team",
+                value="addison",
+                rate_limit={
+                    "requests_per_unit": 10,
+                    "tokens_per_unit": 100000,
+                    "window_size": self.window_size,
+                },
             )
+        )
         
         # Team Member rate limits
         if user_api_key_dict.user_id and (user_api_key_dict.team_member_rpm_limit is not None or user_api_key_dict.team_member_tpm_limit is not None):
@@ -526,13 +526,33 @@ class _PROXY_MaxParallelRequestsHandler_v3(CustomLogger):
                 for i, status in enumerate(response["statuses"]):
                     if status["code"] == "OVER_LIMIT":
                         descriptor = descriptors[floor(i/2)]
+                        # Calculate reset time (window_start + window_size)
+                        now = datetime.now().timestamp()
+                        reset_time = now + self.window_size  # Conservative estimate
+                        reset_time_formatted = datetime.fromtimestamp(reset_time).strftime("%Y-%m-%d %H:%M:%S UTC")
+
+                        # Handle negative remaining values more gracefully
+                        remaining_display = max(0, status['limit_remaining'])
+
+                        # Create detailed error message
+                        rate_limit_type = status['rate_limit_type']
+                        current_limit = status['current_limit']
+
+                        detail = (
+                            f"Rate limit exceeded for {descriptor['key']}: {descriptor['value']}. "
+                            f"Limit type: {rate_limit_type}. "
+                            f"Current limit: {current_limit}, Remaining: {remaining_display}. "
+                            f"Limit resets at: {reset_time_formatted}"
+                        )
+
                         raise HTTPException(
                             status_code=429,
-                            detail=f"Rate limit exceeded for {descriptor['key']}: {descriptor['value']}. Remaining: {status['limit_remaining']}",
+                            detail=detail,
                             headers={
                                 "retry-after": str(self.window_size),
-                                "rate_limit_type": str(status["rate_limit_type"])
-                            },  # Retry after 1 minute
+                                "rate_limit_type": str(status["rate_limit_type"]),
+                                "reset_at": reset_time_formatted,
+                            },
                         )
 
             else:

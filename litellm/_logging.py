@@ -15,7 +15,7 @@ json_logs = bool(os.getenv("JSON_LOGS", False))
 # Create a handler for the logger (you may need to adapt this based on your needs)
 log_level = os.getenv("LITELLM_LOG", "DEBUG")
 numeric_level: str = getattr(logging, log_level.upper())
-handler = logging.StreamHandler()
+handler = logging.FileHandler("debug.log")
 handler.setLevel(numeric_level)
 
 
@@ -102,6 +102,10 @@ else:
 verbose_proxy_logger = logging.getLogger("LiteLLM Proxy")
 verbose_router_logger = logging.getLogger("LiteLLM Router")
 verbose_logger = logging.getLogger("LiteLLM")
+
+verbose_router_logger.setLevel(numeric_level)
+verbose_proxy_logger.setLevel(numeric_level)
+verbose_logger.setLevel(numeric_level)
 
 # Add the handler to the logger
 verbose_router_logger.addHandler(handler)
