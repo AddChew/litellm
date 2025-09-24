@@ -1,0 +1,15 @@
+model_list:
+- litellm_params:
+    api_base: http://localhost:8000
+    api_key: my-fake-key
+    model: openai/my-fake-model
+  model_name: fake-openai-endpoint
+
+litellm_settings:
+  num_retries: 0
+  cache: true
+  cache_params:
+    type: redis
+    host: localhost
+    port: 6379
+    supported_call_types: []

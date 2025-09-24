@@ -5,11 +5,13 @@ import time, asyncio
 #### LITELLM PROXY #### 
 litellm_client = AsyncOpenAI(
     api_key="my-fake-key", # [CHANGE THIS]
-    base_url="http://localhost:3010"
+    base_url="http://localhost:3001",
+    max_retries=0,
 )
 litellm_client_2 = AsyncOpenAI(
     api_key="my-fake-key", # [CHANGE THIS]
-    base_url="http://localhost:3011"
+    base_url="http://localhost:3002",
+    max_retries=0,
 )
 
 async def proxy_completion_non_streaming():
